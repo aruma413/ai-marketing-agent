@@ -1,6 +1,7 @@
 """app.py - simple Gradio dashboard: HOME, BUSINESS PROFILE, CREATE POST, AI CHAT,
 SCHEDULE, POST HISTORY, SOCIAL CONNECTIONS, SETTINGS."""
 import html
+import os
 import inspect
 
 import gradio as gr
@@ -513,7 +514,13 @@ def launch(share=True):
     auth = ("admin", config.APP_PASSWORD) if config.APP_PASSWORD else None
     if auth is None:
         print("NOTE: no APP_PASSWORD secret set - anyone with the link can open this dashboard.")
-    options = {"share": share, "auth": auth, "debug": True}
+    options = {
+        "share": share,
+        "auth": auth,
+        "debug": True,
+        "server_name": "0.0.0.0",
+        "server_port": int(os.environ.get("PORT", 7860)),
+    }
     if _accepts(demo.launch, "theme"):            # Gradio 6
         theme = make_theme()
         if theme is not None:
@@ -521,3 +528,7 @@ def launch(share=True):
     if _accepts(demo.launch, "css"):              # Gradio 6
         options["css"] = RAW_CSS
     demo.launch(**options)
+
+
+if __name__ == "__main__":
+    launch(share=False)
